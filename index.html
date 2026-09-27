@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olymp Trade Signal Hub</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #0f172a; color: #ffffff; text-align: center; padding: 20px; }
+        .container { max-width: 420px; margin: 0 auto; }
+        .card { background-color: #1e293b; border-radius: 16px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; margin-top: 20px; }
+        .btn-signal { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: none; width: 100%; padding: 18px; font-size: 1.2rem; font-weight: bold; border-radius: 12px; cursor: pointer; }
+        .btn-signal:active { transform: scale(0.98); }
+        .direction { font-size: 2.2rem; font-weight: 800; margin: 15px 0; }
+        .buy { color: #22c55e; }
+        .sell { color: #ef4444; }
+        .neutral { color: #94a3b8; }
+        .score-box { font-size: 1.8rem; font-weight: bold; background: #0f172a; padding: 10px; border-radius: 10px; display: inline-block; width: 70%; margin: 10px 0; }
+        .status-tag { font-size: 0.95rem; font-weight: 600; padding: 8px 12px; border-radius: 6px; margin-top: 10px; display: inline-block; }
+        .status-strong { background: #15803d; color: #fff; }
+        .status-medium { background: #b45309; color: #fff; }
+        .status-risk { background: #991b1b; color: #fff; }
+    </style>
+</head>
+<body>
+
+  <div class="container" id="main-content" style="display: none;">
+    <h2>⚡ Olymp Trade Signal Hub</h2>
+
+    <button class="btn-signal" onclick="fetchSignal()">⚡ GET INSTANT SIGNAL NOW</button>
+
+    <div class="card">
+      <h3 id="pair">BTC/USDT</h3>
+      <p>Live Price: $<span id="price">0.00</span> | RSI: <span id="rsi">0</span></p>
+
+      <div id="direction-text" class="direction neutral">CLICK BUTTON ABOVE</div>
+
+      <div>Confidence Score:</div>
+      <div class="score-box"><span id="score">0</span>%</div>
+
+      <br>
+      <div id="status-tag" class="status-tag" style="display:none;">-</div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <script>
+    // Security Password Setup
+    const MY_PASSWORD = "Aeioisad21";
+    const userEntry = prompt("Enter Security Passcode:");
+
+    if (userEntry !== MY_PASSWORD) {
+        alert("Access Denied! Incorrect Passcode.");
+        document.body.innerHTML = "<h2 style='color:#ef4444; margin-top:50px;'>❌ Access Denied: Invalid Passcode</h2>";
+    } else {
+        document.getElementById("main-content").style.display = "block";
+
+        // Firebase Configuration (Aapka DB URL Yahan Aaye Ga)
+        const firebaseConfig = {
+            databaseURL: "https://YOUR_FIREBASE_DB_URL.firebaseio.com/"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function fetchSignal() {
+          db.ref('bybit_signals/BTCUSDT').once('value').then((snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+
+            document.getElementById('price').innerText = data.price;
+            document.getElementById('rsi').innerText = data.rsi;
+            document.getElementById('score').innerText = data.confidence;
+
+            const dirElem = document.getElementById('direction-text');
+            dirElem.innerText = data.direction;
+
+            if (data.direction.includes("BUY")) {
+              dirElem.className = "direction buy";
+            } else if (data.direction.includes("SELL")) {
+              dirElem.className = "direction sell";
+            } else {
+              dirElem.className = "direction neutral";
+            }
+
+            const tagElem = document.getElementById('status-tag');
+            tagElem.style.display = "inline-block";
+            tagElem.innerText = data.status;
+
+            if (data.confidence >= 70) {
+              tagElem.className = "status-tag status-strong";
+            } else if (data.confidence >= 50) {
+              tagElem.className = "status-tag status-medium";
+            } else {
+              tagElem.className = "status-tag status-risk";
+            }
+          });
+        }
+    }
+  </script>
+</body>
+</html>
