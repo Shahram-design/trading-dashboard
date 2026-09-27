@@ -3,50 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Olymp Trade Signal Hub</title>
+    <title>Olymp Trade OTC Strategy Guide</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #0f172a; color: #ffffff; text-align: center; padding: 20px; }
         .container { max-width: 420px; margin: 0 auto; }
-        .card { background-color: #1e293b; border-radius: 16px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; margin-top: 20px; }
-        .btn-signal { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: none; width: 100%; padding: 18px; font-size: 1.2rem; font-weight: bold; border-radius: 12px; cursor: pointer; }
-        .btn-signal:active { transform: scale(0.98); }
-        .direction { font-size: 2.2rem; font-weight: 800; margin: 15px 0; }
-        .buy { color: #22c55e; }
-        .sell { color: #ef4444; }
-        .neutral { color: #94a3b8; }
-        .score-box { font-size: 1.8rem; font-weight: bold; background: #0f172a; padding: 10px; border-radius: 10px; display: inline-block; width: 70%; margin: 10px 0; }
-        .status-tag { font-size: 0.95rem; font-weight: 600; padding: 8px 12px; border-radius: 6px; margin-top: 10px; display: inline-block; }
-        .status-strong { background: #15803d; color: #fff; }
-        .status-medium { background: #b45309; color: #fff; }
-        .status-risk { background: #991b1b; color: #fff; }
+        .card { background-color: #1e293b; border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; margin-top: 15px; text-align: left; }
+        .asset-title { font-size: 1.3rem; font-weight: bold; color: #38bdf8; margin-bottom: 5px; }
+        .payout { color: #22c55e; font-weight: bold; }
+        .rule-box { background: #0f172a; padding: 12px; border-radius: 10px; margin-top: 10px; border-left: 4px solid #2563eb; }
+        .buy-rule { border-left-color: #22c55e; }
+        .sell-rule { border-left-color: #ef4444; }
+        .tag { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; background: #334155; }
     </style>
 </head>
 <body>
 
   <div class="container" id="main-content" style="display: none;">
-    <h2>⚡ Olymp Trade Signal Hub</h2>
+    <h2>📊 Weekend OTC Strategy Hub</h2>
+    <p style="color: #94a3b8; font-size: 0.9rem;">Best Assets for Today (Sunday)</p>
 
-    <button class="btn-signal" onclick="fetchSignal()">⚡ GET INSTANT SIGNAL NOW</button>
-
+    <!-- Asset 1 -->
     <div class="card">
-      <h3 id="pair">BTC/USDT</h3>
-      <p>Live Price: $<span id="price">0.00</span> | RSI: <span id="rsi">0</span></p>
+      <div class="asset-title">Asia Composite Index <span class="payout">(95% Profit)</span></div>
+      <span class="tag">Recommended</span>
+      <div class="rule-box buy-rule">
+        🟢 <strong>BUY Signal:</strong> When RSI line drops below <strong>30</strong> (Oversold). Take 1-2 min UP trade.
+      </div>
+      <div class="rule-box sell-rule">
+        🔴 <strong>SELL Signal:</strong> When RSI line crosses above <strong>70</strong> (Overbought). Take 1-2 min DOWN trade.
+      </div>
+    </div>
 
-      <div id="direction-text" class="direction neutral">CLICK BUTTON ABOVE</div>
+    <!-- Asset 2 -->
+    <div class="card">
+      <div class="asset-title">EUR/USD OTC <span class="payout">(95% Profit)</span></div>
+      <span class="tag">High Volatility</span>
+      <div class="rule-box buy-rule">
+        🟢 <strong>BUY Signal:</strong> RSI &lt; 30 ➔ 1-2 min UP trade.
+      </div>
+      <div class="rule-box sell-rule">
+        🔴 <strong>SELL Signal:</strong> RSI &gt; 70 ➔ 1-2 min DOWN trade.
+      </div>
+    </div>
 
-      <div>Confidence Score:</div>
-      <div class="score-box"><span id="score">0</span>%</div>
-
-      <br>
-      <div id="status-tag" class="status-tag" style="display:none;">-</div>
+    <!-- App Setup Instructions -->
+    <div class="card" style="background: #0f172a;">
+      <h3 style="margin-top:0; color:#f59e0b;">⚙️ Olymp Trade App Setup:</h3>
+      <ol style="padding-left: 20px; color: #cbd5e1; font-size: 0.95rem; line-height: 1.6;">
+        <li>Open <strong>Asia Composite Index</strong> or <strong>EUR/USD OTC</strong>.</li>
+        <li>Click <strong>Indicators (A icon)</strong> ➔ Select <strong>RSI</strong> (Period: 14).</li>
+        <li>Set Trade Duration to <strong>1 min</strong> or <strong>2 min</strong>.</li>
+      </ol>
     </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
   <script>
-    // Security Password Setup
     const MY_PASSWORD = "Aeioisad21";
     const userEntry = prompt("Enter Security Passcode:");
 
@@ -55,47 +66,6 @@
         document.body.innerHTML = "<h2 style='color:#ef4444; margin-top:50px;'>❌ Access Denied: Invalid Passcode</h2>";
     } else {
         document.getElementById("main-content").style.display = "block";
-
-        // Firebase Configuration (Aapka DB URL Yahan Aaye Ga)
-        const firebaseConfig = {
-            databaseURL: "https://YOUR_FIREBASE_DB_URL.firebaseio.com/"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        function fetchSignal() {
-          db.ref('bybit_signals/BTCUSDT').once('value').then((snapshot) => {
-            const data = snapshot.val();
-            if (!data) return;
-
-            document.getElementById('price').innerText = data.price;
-            document.getElementById('rsi').innerText = data.rsi;
-            document.getElementById('score').innerText = data.confidence;
-
-            const dirElem = document.getElementById('direction-text');
-            dirElem.innerText = data.direction;
-
-            if (data.direction.includes("BUY")) {
-              dirElem.className = "direction buy";
-            } else if (data.direction.includes("SELL")) {
-              dirElem.className = "direction sell";
-            } else {
-              dirElem.className = "direction neutral";
-            }
-
-            const tagElem = document.getElementById('status-tag');
-            tagElem.style.display = "inline-block";
-            tagElem.innerText = data.status;
-
-            if (data.confidence >= 70) {
-              tagElem.className = "status-tag status-strong";
-            } else if (data.confidence >= 50) {
-              tagElem.className = "status-tag status-medium";
-            } else {
-              tagElem.className = "status-tag status-risk";
-            }
-          });
-        }
     }
   </script>
 </body>
